@@ -53,9 +53,6 @@
     <ClCompile Include="Bezier.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Primitive.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -81,6 +78,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RTEngine.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

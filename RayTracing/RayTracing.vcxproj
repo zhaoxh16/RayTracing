@@ -150,7 +150,7 @@
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="RTEngine.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="test.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Image.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
