@@ -2,7 +2,6 @@
 #include "Camera.h"
 #include "Primitive.h"
 #include <vector>
-#include "Image.h"
 
 using namespace std;
 
@@ -19,9 +18,7 @@ public:
 	void setCamera(Vector3d camera);
 	void setSize(Vector3d size);
 	Camera* camera();
-	Vector3d size();
-	void compute();//当所有的东西都设置好后执行该函数进行渲染
-	void show();//显示图片
+	Vector3d size();	
 
 private:
 	Camera m_camera;//视点位置
@@ -30,6 +27,5 @@ private:
 	vector<Primitive*> m_primitive;//所有场景中primitive的数组的头指针
 	int m_lightNum;//光源数量
 	vector<Light*> m_light;//光源位置
-	Image m_image;//要显示的图片
 
 };

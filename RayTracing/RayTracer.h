@@ -31,10 +31,6 @@ double getSpec(double VdR, double spec) {
 	else return 0;
 }
 
-double getRefr() {
-
-}
-
 int getIntersectPri(Primitive** pri, int count, Ray& ray, Primitive*& myPrimitive, double& myDistance) {
 	myDistance = 10000000;
 	int myResult = 0;

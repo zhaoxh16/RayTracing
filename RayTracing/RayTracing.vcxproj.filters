@@ -21,9 +21,6 @@
     <ClInclude Include="Primitive.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="test.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Ray.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -40,6 +37,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RTEngine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Photon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="kdtree.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -66,6 +72,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Photon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="kdtree.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RTEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

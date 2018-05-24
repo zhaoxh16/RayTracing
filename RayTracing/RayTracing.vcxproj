@@ -130,20 +130,25 @@
   <ItemGroup>
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="kdtree.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="Photon.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RayTracer.h" />
+    <ClInclude Include="RTEngine.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="test.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bezier.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="kdtree.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Photon.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="RTEngine.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="Image.cpp" />

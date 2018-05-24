@@ -1,10 +1,9 @@
 #include "Primitive.h"
 #include <iostream>
-#include <Eigen/Dense>
-#include "test.h"
 #include "Camera.h"
-#include "Material.h"
 #include "Scene.h"
+#include "kdtree.h"
+#include "RTEngine.h"
 
 using namespace std;
 using namespace Eigen;
@@ -29,8 +28,10 @@ int main() {
 	scene->addP(new Plane(Direction(1, 0, 0), -scene->size().x(), m));
 	scene->addP(new Plane(Direction(0, -1, 0), 0, m));
 	scene->addP(new Plane(Direction(0, 0, 1), -800, m));
-	scene->compute();
-	scene->show();
+	RTEngine engine;
+	engine.setScene(scene);
+	engine.render();
+	engine.show();
 	system("pause");
 	return 0;
 }

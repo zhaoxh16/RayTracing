@@ -1,6 +1,6 @@
 #include "Scene.h"
 
-Scene::Scene() : m_camera(Point(0,0,0)),m_priNum(0),m_lightNum(0),m_size(0,0,0),m_image(0,0){};
+Scene::Scene() : m_camera(Point(0,0,0)),m_priNum(0),m_lightNum(0),m_size(0,0,0){}
 
 Scene::~Scene() {}
 
@@ -29,18 +29,9 @@ int Scene::pNum() { return m_priNum; }
 void Scene::setCamera(Vector3d camera) { m_camera = Camera(camera); }
 
 void Scene::setSize(Vector3d size) {
-	m_size = size;
-	m_image = Image(size.x(), size.y());
+	m_size = size;	
 }
 
 Camera* Scene::camera() { return &m_camera; }
 
 Vector3d Scene::size() { return m_size; }
-
-void Scene::compute() {
-
-}
-
-void Scene::show() {
-	m_image.showImage();
-}
