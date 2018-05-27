@@ -135,6 +135,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="Photon.h" />
     <ClInclude Include="photontracer.h" />
+    <ClInclude Include="PPMEngine.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RayTracer.h" />
