@@ -31,7 +31,7 @@ cv::Vec3b RTEngine::getPixel(int i, int j) {
 	direction.normalize();
 	Ray ray(scene->camera()->pos(), direction, 1.0);
 	rayTrace(ray,1.0,color);
-	cv::Vec3b cvColor(color.x(), color.y(), color.z());
+	cv::Vec3b cvColor(color.x()*255.0, color.y()*255.0, color.z()*255.0);
 	return cvColor;
 }
 
@@ -69,9 +69,9 @@ void RTEngine::rayTrace(Ray ray, double weight, Vector3d& color) {
 			color += newColor * collidePrimitive->material.refr;
 		}
 	}
-	if (color.x() > 255)color.x() = 255;
-	if (color.y() > 255)color.y() = 255;
-	if (color.z() > 255)color.z() = 255;
+	if (color.x() > 1.0)color.x() = 1.0;
+	if (color.y() > 1.0)color.y() = 1.0;
+	if (color.z() > 1.0)color.z() = 1.0;
 }
 
 Point RTEngine::getOrigin(Point origin, Direction direction) {
@@ -98,6 +98,7 @@ int RTEngine::getIntersectPri(Ray ray, Primitive*& collidePrimitive, double& col
 void RTEngine::getDiffuseAndPhong(Primitive* collidePrimitive, Vector3d N, Point p, Color& color, Ray ray) {
 	for (int i = 0; i < scene->light()->size(); ++i) {
 		Vector3d L = scene->light()->at(i)->centre - p;
+		Color lightColor = scene->light()->at(i)->material.color;
 		double distance = sqrt(L.dot(L));
 		L.normalize();
 		double LdN = L.dot(N);
@@ -106,7 +107,7 @@ void RTEngine::getDiffuseAndPhong(Primitive* collidePrimitive, Vector3d N, Point
 		double VdR = ray.direction.dot(R);
 		double spec = getSpec(VdR, collidePrimitive->material.spec);
 		double shade = getShade(Ray(getOrigin(p, L), L, ray.nrefr), distance);
-		color += shade * (diff + spec)*collidePrimitive->material.color;
+		color += shade * (diff + spec)*Color(collidePrimitive->material.color.x()*lightColor.x(), collidePrimitive->material.color.y()*lightColor.y(), collidePrimitive->material.color.z()*lightColor.z());
 	}
 }
 
