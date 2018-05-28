@@ -24,9 +24,6 @@
     <ClInclude Include="Ray.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RayTracer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -45,13 +42,10 @@
     <ClInclude Include="Photon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="kdtree.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="photontracer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="PPMEngine.h">
+    <ClInclude Include="kdtree.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -78,9 +72,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Photon.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="kdtree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RTEngine.cpp">

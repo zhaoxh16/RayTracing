@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Camera.h"
 #include "Scene.h"
-#include "kdtree.h"
+#include "kdtree.hpp"
 #include "RTEngine.h"
 
 using namespace std;
