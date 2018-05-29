@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const double iniRadius = 1;
+const double iniRadius = 10;
 
 struct Node {
 	Node *p, *lc, *rc;
