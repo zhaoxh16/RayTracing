@@ -1,118 +1,66 @@
 #include "kdtree.h"
 
+KDTree::KDTree(): root(NULL){}
 
-Node::Node() :obj(NULL), p(NULL), isLC(false) {
-	ch[0] = NULL;
-	ch[1] = NULL;
-	radius = iniRadius;
-}
-
-Node::Node(HitPoint* obj) : obj(obj), p(NULL), isLC(false) {
-	ch[0] = NULL;
-	ch[1] = NULL;
-	radius = iniRadius;
-}
-
-void Node::addChild(Node* child, int LR) {
-	//LR为0或1，表示child的位置
-	if (child == NULL) return;
-	child->p = this;
-	ch[LR] = child;
-	if (LR == 0) child->isLC = true;
-	else child->isLC = false;
-}
-
-KDTree::~KDTree() {
-	for (int i = 0; i < nodes.size(); ++i)
-		if (nodes[i]) delete nodes[i];
-}
-void KDTree::addNode(HitPoint* obj) {
-	Node* node = new Node(obj);
+void KDTree::addNode(Node* node) {
 	nodes.push_back(node);
 }
+
 void KDTree::build() {
-	int count = nodes.size();
-	if (count == 0) return;
-	else if (count == 1) {
-		root = nodes[0];
-		return;
-	}
-	else root = split(nodes.begin(), nodes.end(), 0);
+	if (nodes.size() == 0) return;
+	root = split(nodes.begin(), nodes.end(), 0);
 }
 
-Node* KDTree::split(typename vector<Node*>::iterator begin, typename vector<Node*>::iterator end, int index) {
-	//对[begin,end)按照第index个坐标进行划分，并返回根节点
-	if (end - begin == 0) return NULL;
-	else if (end - begin == 1) {
-		(*begin)->index = index;
-		return *begin;
-	}
-	Compare cmp(index);
-	nth_element(begin, begin + (end - begin) / 2, end, cmp);
-	Node* subRoot = *(begin + (end - begin) / 2);
+Node* KDTree::split(vector<Node*>::iterator start, vector<Node*>::iterator end, int index) {
+	int size = end - start;
+	if (size == 0)return NULL;
+	Compare myCompare(index);
+	nth_element(start, start + size / 2, end, myCompare);
+	Node* subRoot = *(start + size / 2);
 	subRoot->index = index;
-	subRoot->addChild(split(begin, begin + (end - begin) / 2, (index + 1) % 3), 0);
-	subRoot->addChild(split(begin + (end - begin) / 2 + 1, end, (index + 1) % 3), 1);
+	subRoot->lc = split(start, start + size / 2, (index + 1) % 3);
+	subRoot->rc = split(start + size / 2 + 1, end, (index + 1) % 3);
+	if (subRoot->lc != NULL) subRoot->lc->p = subRoot;
+	if (subRoot->rc != NULL) subRoot->rc->p = subRoot;
 	return subRoot;
 }
 
-void KDTree::rangeSearch(double radius, Vector3d pos, Color photonColor, Vector3d size) {
-	if (root == NULL)return;
-	Vector3d l(0, 0, -size.z());
-	Vector3d r(size);
-	Vector3d a(pos - Vector3d(radius, radius, radius));
-	Vector3d b(pos + Vector3d(radius, radius, radius));
-	m_rangeSearch(root, l, r, pos, a, b, photonColor);
-	
+void KDTree::setSize(Vector3d a, Vector3d b) {
+	this->a = a;
+	this->b = b;
 }
 
-void KDTree::m_rangeSearch(Node* node, Vector3d l, Vector3d r,Vector3d& pos, Vector3d& a, Vector3d& b, Color& photonColor) {
-	int index = node->index;
-	double splitPos = node->obj->pos[index];
-	Vector3d r1 = r;
-	Vector3d l2 = l;
-	r1[index] = splitPos;
-	l2[index] = splitPos;
-	if (node->ch[0] != NULL) {
-		int flag = examine(l, r1, a, b);
-		if (flag == 1) m_rangeSearch(node->ch[0], l, r1,pos, a, b, photonColor);
-		else if (flag == 2)travel(node->ch[0],pos, photonColor);
-	}
-	if (node->ch[1] != NULL) {
-		int flag = examine(l2, r, a, b);
-		if (flag == 1)m_rangeSearch(node->ch[1], l2, r,pos, a, b, photonColor);
-		else if (flag == 2)travel(node->ch[1], pos, photonColor);
-	}
-	HitPoint* point = node->obj;
-	if (getDistance2(point->pos, pos) > point->r*point->r) return;
-	Vector3d L = pos - point->pos;
-	L.normalize();
-	double LdN = L.dot(point->N);
-	double diff = 0;
-	if (LdN > 0 && point->BRDF > 0)
-		diff = LdN * point->BRDF;
-	Color flux = colorMultiply(photonColor, point->colorWeight)*diff;
-	point->update(flux);
+vector<Node*> KDTree::rangeSearch(Vector3d pos, double radius) {
+	vector<Node*> result;
+	if (root == NULL) return result;
+	Vector3d lightL(pos - Vector3d(1.0, 1.0, 1.0)*radius);
+	Vector3d lightR(pos + Vector3d(1.0, 1.0, 1.0)*radius);
+	m_rangeSearch(result, root, a, b, lightL, lightR, pos);
+	return result;
 }
 
-void KDTree::travel(Node* node, Vector3d& pos, Color& photonColor) {
-	if (node->ch[0] != NULL) travel(node->ch[0],pos, photonColor);
-	if (node->ch[1] != NULL) travel(node->ch[1],pos, photonColor);
-	HitPoint* point = node->obj;
-	if (getDistance2(point->pos, pos) > point->r*point->r)return;
-	Vector3d L = pos - point->pos;
-	L.normalize();
-	double LdN = L.dot(point->N);
-	double diff = 0;
-	if (LdN > 0 && point->BRDF > 0)
-		diff = LdN * point->BRDF;
-	Color flux = colorMultiply(photonColor, point->colorWeight)*diff;
-	point->update(flux);
+void KDTree::m_rangeSearch(vector<Node*>& result, Node* node, Vector3d L, Vector3d R, Vector3d lightL, Vector3d lightR, Vector3d pos) {
+	if (node == NULL) return;
+	int relation = rangeRelation(L, R, lightL, lightR);
+	if (relation == 0) return;
+	/*else if (relation == 1) {
+		travel(result, node, pos);
+		return;
+	}*/
+	//如果两个长方体相交
+	//首先检测该节点上的HitPoint是否能够接收
+	if (distance(node->point->pos, pos) < node->point->r) 
+		result.push_back(node);
+	Vector3d L2 = L;
+	Vector3d R2 = R;
+	L2[node->index] = node->point->pos[node->index];
+	R2[node->index] = node->point->pos[node->index];
+	m_rangeSearch(result, node->lc, L, R2, lightL, lightR, pos);
+	m_rangeSearch(result, node->rc, L2, R, lightL, lightR, pos);
 }
 
-int KDTree::examine(Vector3d l, Vector3d r, Vector3d a, Vector3d b) {
-	if (r[0] < a[0] || r[1] < a[1] || r[2] < a[2]) return 0;
-	if (l[0] > b[0] || l[1] > b[1] || l[2] > b[2]) return 0;
-	if (l[0] >= a[0] && l[1] >= a[1] && l[2] >= a[2] && r[0] <= b[0] && r[1] <= b[1] && r[2] <= b[2])return 2;
-	return 1;
+int KDTree::rangeRelation(Vector3d L, Vector3d R, Vector3d lightL, Vector3d lightR) {
+	if (L[0] >= lightL[0] && L[1] >= lightL[1] && L[2] >= lightL[2] && R[0] <= lightR[0] && R[1] <= lightR[1] && R[2] <= lightR[2]) return 1;
+	if (L[0] > lightR[0] || L[1] > lightR[1] || L[2] > lightR[2] || R[0] < lightL[0] || R[1] < lightL[1] || R[2] < lightL[2]) return 0;
+	return 2;
 }

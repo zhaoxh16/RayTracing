@@ -37,47 +37,49 @@ void RTEngine::emitRay() {
 		}
 		cout << i << endl;
 	}
+	tree.setSize(Vector3d(0, 0, -scene->size().z()), Vector3d(scene->size()));
 	tree.build();
 }
 
 void RTEngine::PPMRender() {
+	cout << tree.nodes.size() << endl;
 	for (int i = 0; i < 10000; ++i) {
 		emitPhoton();
 		if (i % 1000 == 0) cout << i << endl;
 	}
-	colorMap = new Color*[scene->size().x()];
-	for (int i = 0; i < scene->size().x(); ++i) {
-		colorMap[i] = new Color[scene->size().y()];
-		for (int j = 0; j < scene->size().y(); ++j) {
-			colorMap[i][j] = Color(0, 0, 0);
-		}
-	}
-	cout << tree.getNodes().size() << endl;
-	vector<Node*>& nodes = tree.nodes;
-	int totn = 0;
-	for (auto i : nodes) {
-		totn++;
-		HitPoint* p = i->obj;
-		colorMap[(int)p->pixelPos[0]][(int)p->pixelPos[1]] += p->color / (3.1415926*p->r*p->r*(double)photonCount);
-		if(totn%1000 == 0) cout << totn << endl;
-	}/*
-	for (int i = 0; i < tree.getNodes().size(); ++i) {
-		//cout << "1" << endl;
-		HitPoint* p = tree.getNodes().at(i)->obj;
-		//cout << "2" << endl;
-		colorMap[(int)p->pixelPos[0]][(int)p->pixelPos[1]] += p->color / (3.1415926*p->r*p->r*(double)photonCount);
-		//cout << "3" << endl;
-		/*if(i % 1000== 0) cout << i << endl;
-	}*/
-	for (int i = 0; i < scene->size().x(); ++i) {
-		for (int j = 0; j < scene->size().y(); ++j) {
-			if (colorMap[i][j].x() > 1) colorMap[i][j].x() = 1;
-			if (colorMap[i][j].y() > 1) colorMap[i][j].y() = 1;
-			if (colorMap[i][j].z() > 1) colorMap[i][j].z() = 1;
-			image->drawPixel(i, scene->size().y() - j, cv::Vec3b(colorMap[i][j].x()*255.0, colorMap[i][j].y()*255.0, colorMap[i][j].z()*255.0));
-		}
-		cout << i << endl;
-	}
+	//colorMap = new Color*[scene->size().x()];
+	//for (int i = 0; i < scene->size().x(); ++i) {
+	//	colorMap[i] = new Color[scene->size().y()];
+	//	for (int j = 0; j < scene->size().y(); ++j) {
+	//		colorMap[i][j] = Color(0, 0, 0);
+	//	}
+	//}
+	//cout << tree.getNodes().size() << endl;
+	//vector<Node*>& nodes = tree.nodes;
+	//int totn = 0;
+	//for (auto i : nodes) {
+	//	totn++;
+	//	HitPoint* p = i->obj;
+	//	colorMap[(int)p->pixelPos[0]][(int)p->pixelPos[1]] += p->color / (3.1415926*p->r*p->r*(double)photonCount);
+	//	if(totn%1000 == 0) cout << totn << endl;
+	//}/*
+	//for (int i = 0; i < tree.getNodes().size(); ++i) {
+	//	//cout << "1" << endl;
+	//	HitPoint* p = tree.getNodes().at(i)->obj;
+	//	//cout << "2" << endl;
+	//	colorMap[(int)p->pixelPos[0]][(int)p->pixelPos[1]] += p->color / (3.1415926*p->r*p->r*(double)photonCount);
+	//	//cout << "3" << endl;
+	//	/*if(i % 1000== 0) cout << i << endl;
+	//}*/
+	//for (int i = 0; i < scene->size().x(); ++i) {
+	//	for (int j = 0; j < scene->size().y(); ++j) {
+	//		if (colorMap[i][j].x() > 1) colorMap[i][j].x() = 1;
+	//		if (colorMap[i][j].y() > 1) colorMap[i][j].y() = 1;
+	//		if (colorMap[i][j].z() > 1) colorMap[i][j].z() = 1;
+	//		image->drawPixel(i, scene->size().y() - j, cv::Vec3b(colorMap[i][j].x()*255.0, colorMap[i][j].y()*255.0, colorMap[i][j].z()*255.0));
+	//	}
+	//	cout << i << endl;
+	//}
 }
 
 cv::Vec3b RTEngine::getPixel(int i, int j) {
@@ -185,7 +187,7 @@ void RTEngine::PPMTrace(Ray ray, double weight, Vector3d pixelPos) {
 	Point p = ray.origin + ray.direction*collideDistance;
 	Direction N = collidePrimitive->getNormal(p);
 	HitPoint* hitPoint = new HitPoint(p, N, ray.direction, pixelPos, collidePrimitive->material.diff, collidePrimitive->material.color*weight, iniRadius, 0, Vector3d(0, 0, 0));
-	tree.addNode(hitPoint);
+	tree.addNode(new Node(hitPoint));
 	Direction R = ray.direction - N * ray.direction.dot(N)*2.0;
 	if (collidePrimitive->material.refl > 0) {
 		double newWeight = weight * collidePrimitive->material.refl;
@@ -239,7 +241,11 @@ void RTEngine::photonTrace(Ray ray, Color& photonColor, int depth) {
 	Point p = ray.origin + ray.direction*collideDistance;
 	Direction N = collidePrimitive->getNormal(p);
 	Direction R = ray.direction - N * ray.direction.dot(N)*2.0;
-	tree.rangeSearch(iniRadius, p, photonColor, scene->size());
+	vector<Node*> nodes = tree.rangeSearch(p,iniRadius);
+	cout << nodes.size() << endl;
+	for (int i = 0; i < nodes.size(); ++i) {
+
+	}
 	Color surfaceColor = collidePrimitive->material.color;
 	Color newPhotonColor(surfaceColor[0] * photonColor[0], surfaceColor[1] * photonColor[1], surfaceColor[2] * photonColor[2]);
 	double possibility = rand()%9999 / double(10000);
