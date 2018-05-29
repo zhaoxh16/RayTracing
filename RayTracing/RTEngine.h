@@ -2,6 +2,8 @@
 #include <Eigen/Dense>
 #include "Scene.h"
 #include "Image.h"
+#include "kdtree.h"
+#include "hitpoint.h"
 
 using namespace Eigen;
 
@@ -12,8 +14,12 @@ public:
 	void render();
 	void show();
 
+	//以下是PPM新加的内容
+	void emitRay();
+	void PPMRender();
+
 private:
-	Scene * scene;
+	Scene* scene;
 	Image* image;
 	static const double weightLimit;//递归深度
 	static const double distanceINF;
@@ -35,4 +41,14 @@ private:
 	}
 	double getShade(Ray ray, double distance);
 
+	//以下是PPM新加的
+	KDTree tree;
+	int photonCount;//发射光子总数
+	void PPMTrace(Ray ray, double weight, Vector3d pixel);
+	Color** colorMap;
+
+	//随机从某个光源发射一个光子
+	void emitPhoton();
+	Vector3d getRandomNormalizeVector();
+	void photonTrace(Ray ray, Color& photonColor, int depth);
 };

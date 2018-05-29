@@ -130,7 +130,8 @@
   <ItemGroup>
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="kdtree.hpp" />
+    <ClInclude Include="hitpoint.h" />
+    <ClInclude Include="kdtree.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Photon.h" />
@@ -143,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="Bezier.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="kdtree.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Photon.cpp" />
     <ClCompile Include="Primitive.cpp" />
