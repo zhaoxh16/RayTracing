@@ -31,11 +31,11 @@ void RTEngine::emitRay() {
 	for (int i = 0; i < scene->size().x(); ++i) {
 		for (int j = 0; j < scene->size().y(); ++j) {
 			Vector3d direction[4];
-			direction[0] = Vector3d(i+0.5, j+0.5, 0) - scene->camera()->pos();
-			direction[1] = Vector3d(i- 0.5, j+ 0.5, 0) - scene->camera()->pos();
+			direction[0] = Vector3d(i, j, 0) - scene->camera()->pos();
+			/*direction[1] = Vector3d(i- 0.5, j+ 0.5, 0) - scene->camera()->pos();
 			direction[2] = Vector3d(i+ 0.5, j- 0.5, 0) - scene->camera()->pos();
-			direction[3] = Vector3d(i- 0.5, j- 0.5, 0) - scene->camera()->pos();
-			for (int k = 0; k < 4; ++k) {
+			direction[3] = Vector3d(i- 0.5, j- 0.5, 0) - scene->camera()->pos();*/
+			for (int k = 0; k < 1; ++k) {
 				direction[k].normalize();
 				Ray ray(scene->camera()->pos(), direction[k], 1.0);
 				PPMTrace(ray, 1.0, Vector3d(i, j, 0));
@@ -49,9 +49,16 @@ void RTEngine::emitRay() {
 
 void RTEngine::PPMRender() {
 	cout << tree.nodes.size() << endl;
+	double start = clock();
+	double stop;
 	for (int i = 0; i < 1000000; ++i) {
 		emitPhoton();
-		if (i % 1000 == 0) cout << i << endl;
+		if (i % 1000 == 0) {
+			cout << i << endl;
+			stop = clock();
+			cout << (stop - start) / CLK_TCK << 's' << endl;
+			start = stop;
+		}
 	}
 	colorMap = new Color*[scene->size().x()];
 	for (int i = 0; i < scene->size().x(); ++i) {
@@ -65,8 +72,13 @@ void RTEngine::PPMRender() {
 	for (auto i : nodes) {
 		totn++;
 		HitPoint* p = i->point;
-		colorMap[(int)p->pixelPos[0]][(int)p->pixelPos[1]] += p->color/4.0 / (3.1415926*p->r*p->r*(double)photonCount);
-		if(totn%1000 == 0) cout << totn << endl;
+		colorMap[(int)p->pixelPos[0]][(int)p->pixelPos[1]] += p->color / (3.1415926*p->r*p->r*(double)photonCount);
+		if (totn % 1000 == 0) {
+			cout << totn << endl;
+			stop = clock();
+			cout << (stop - start)/CLK_TCK << 's' << endl;
+			start = stop;
+		}
 	}/*
 	for (int i = 0; i < tree.getNodes().size(); ++i) {
 		//cout << "1" << endl;
@@ -238,7 +250,7 @@ Vector3d RTEngine::getRandomNormalizeVector() {
 }
 
 void RTEngine::photonTrace(Ray ray, Color& photonColor, int depth) {
-	if (depth >= 3) return;
+	if (depth >= 5) return;
 	double collideDistance = distanceINF;
 	Primitive* collidePrimitive = NULL;
 	int result = getIntersectPri(ray, collidePrimitive, collideDistance);
@@ -249,6 +261,7 @@ void RTEngine::photonTrace(Ray ray, Color& photonColor, int depth) {
 	vector<Node*> nodes = tree.rangeSearch(p,iniRadius);	
 	for (int i = 0; i < nodes.size(); ++i) {
 		nodes[i]->point->update(ray, photonColor);
+		nodes[i]->update();
 	}
 	Color surfaceColor = collidePrimitive->material.color;
 	Color newPhotonColor(surfaceColor[0] * photonColor[0], surfaceColor[1] * photonColor[1], surfaceColor[2] * photonColor[2]);

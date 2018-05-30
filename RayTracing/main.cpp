@@ -10,10 +10,10 @@ using namespace Eigen;
 int main() {
 
 	Scene* scene = new Scene();
-	scene->setSize(Vector3d(800, 600, 1000));
+	scene->setSize(Vector3d(800, 600, 700));
 	scene->setCamera(Vector3d(400, 250, -500));
 	Material m(Vector3d(139, 104, 0), 0.1, 0.9, 0.5, 0, 0);
-	Material lightMaterial(Vector3d(255000000, 255000000, 255000000), 0, 0, 0, 0, 0);
+	Material lightMaterial(Vector3d(2550000000/4, 2550000000/4, 2550000000/4), 0, 0, 0, 0, 0);
 	/*scene->addL(new Light(Point(150, 550, 500), 100, lightMaterial));*/
 	scene->addL(new Light(Point(400, 590, 100), 100, lightMaterial));
 	scene->addP(new Sphere(Point(200, 200, 300), 100, Material(Vector3d(240, 32, 160), 0.3, 0.7, 0.3, 0.5, 1.33)));
@@ -28,8 +28,8 @@ int main() {
 	scene->addP(new Plane(Direction(-1, 0, 0), 0, m));
 	scene->addP(new Plane(Direction(1, 0, 0), -scene->size().x(), m));
 	scene->addP(new Plane(Direction(0, -1, 0), 0, m));
-	scene->addP(new Plane(Direction(0, 0, 1), -800, m));
-	scene->addP(new Plane(Direction(0, 0, -1), 800, m));
+	scene->addP(new Plane(Direction(0, 0, 1), -600, m));
+	scene->addP(new Plane(Direction(0, 0, -1), 600, m));
 	RTEngine engine;
 	engine.setScene(scene);
 	engine.emitRay();

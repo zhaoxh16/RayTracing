@@ -6,14 +6,27 @@
 
 using namespace std;
 
-const double iniRadius = 10;
+const double iniRadius = 80;
 
 struct Node {
 	Node *p, *lc, *rc;
 	int index;
+	double radius = iniRadius;
 	HitPoint* point;
 	Node(HitPoint* point) :point(point), p(NULL), lc(NULL), rc(NULL){}
 	void setIndex(int index) { this->index = index; }
+	void update() {
+		double a, b, c;
+		a = point->r;
+		b = 0;
+		c = 0;
+		if (lc != NULL) b = lc->radius;
+		if (rc != NULL) c = rc->radius;
+		if (max((b, c), a) < radius) {
+			radius = max((b, c), a);
+			if (p != NULL) p->update();
+		}
+	}
 };
 
 class Compare {

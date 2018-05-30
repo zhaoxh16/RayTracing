@@ -41,6 +41,8 @@ vector<Node*> KDTree::rangeSearch(Vector3d pos, double radius) {
 
 void KDTree::m_rangeSearch(vector<Node*>& result, Node* node, Vector3d L, Vector3d R, Vector3d lightL, Vector3d lightR, Vector3d pos) {
 	if (node == NULL) return;
+	lightL = pos - Vector3d(1, 1, 1)*node->radius;
+	lightR = pos + Vector3d(1, 1, 1)*node->radius;
 	int relation = rangeRelation(L, R, lightL, lightR);
 	if (relation == 0) return;
 	/*else if (relation == 1) {
