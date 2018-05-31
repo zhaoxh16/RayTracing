@@ -140,6 +140,7 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RTEngine.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bezier.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

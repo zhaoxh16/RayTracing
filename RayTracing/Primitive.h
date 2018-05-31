@@ -5,6 +5,7 @@
 #include "Ray.h"
 #include <cmath>
 #include "Material.h"
+#include "texture.h"
 
 using namespace Eigen;
 
@@ -19,6 +20,8 @@ public:
 	Primitive(Material material);
 	virtual int intersect(const Ray& ray, double& distance) = 0;//求与ray的交点，若无交点返回0，有交点且光源在外部返回1，有交点且光源在内部返回-1；同时将到交点的距离赋值给distance
 	virtual Direction getNormal(const Point& p) = 0;//获得一点处的法向量
+	/*virtual void setTexture(Texture* texture) = 0;*/
+	/*virtual void getColor(Vector3d point) = 0;*/
 };
 
 class Sphere: public Primitive {
@@ -47,4 +50,6 @@ public:
 	Plane(Direction normal, double D, Material material);
 	int intersect(const Ray& ray, double& distance);
 	Direction getNormal(const Point& p);
+	/*void setTexture(Texture* texture);
+	Color getColor(Vector3d point);*/
 };
