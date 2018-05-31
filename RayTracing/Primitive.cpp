@@ -10,7 +10,8 @@ void Primitive::setTexture(std::string fileName) {
 }
 
 Color Primitive::getColor(Vector3d point) {
-	return texture->getColor(point);
+	if(useTexture) return texture->getColor(point);
+	else return material.color;
 }
 
 Sphere::Sphere(): Primitive(),centre(-1,-1,-1),radius(-1),sqr(radius*radius){}
