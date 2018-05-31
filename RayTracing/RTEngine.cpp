@@ -51,7 +51,7 @@ void RTEngine::PPMRender() {
 	cout << tree.nodes.size() << endl;
 	double start = clock();
 	double stop;
-	for (int i = 0; i < 1000000; ++i) {
+	for (int i = 0; i < 10000; ++i) {
 		emitPhoton();
 		if (i % 1000 == 0) {
 			cout << i << endl;
@@ -181,7 +181,7 @@ void RTEngine::getDiffuseAndPhong(Primitive* collidePrimitive, Vector3d N, Point
 		double VdR = ray.direction.dot(R);
 		double spec = getSpec(VdR, collidePrimitive->material.spec);
 		double shade = getShade(Ray(getOrigin(p, L), L, ray.nrefr), distance);
-		color += shade * (diff + spec)*Color(collidePrimitive->material.color.x()*lightColor.x(), collidePrimitive->material.color.y()*lightColor.y(), collidePrimitive->material.color.z()*lightColor.z());
+		color += shade * (diff + spec)*Color(collidePrimitive->getColor(p).x()*lightColor.x(), collidePrimitive->getColor(p).y()*lightColor.y(), collidePrimitive->getColor(p).z()*lightColor.z());
 	}
 }
 
@@ -203,7 +203,7 @@ void RTEngine::PPMTrace(Ray ray, double weight, Vector3d pixelPos) {
 	if (result == 0)return;
 	Point p = ray.origin + ray.direction*collideDistance;
 	Direction N = collidePrimitive->getNormal(p);
-	HitPoint* hitPoint = new HitPoint(p, N, ray.direction, pixelPos, collidePrimitive->material.diff, collidePrimitive->material.color*weight, iniRadius, 0, Vector3d(0, 0, 0));
+	HitPoint* hitPoint = new HitPoint(p, N, ray.direction, pixelPos, collidePrimitive->material.diff, collidePrimitive->getColor(p)*weight, iniRadius, 0, Vector3d(0, 0, 0));
 	tree.addNode(new Node(hitPoint));
 	Direction R = ray.direction - N * ray.direction.dot(N)*2.0;
 	if (collidePrimitive->material.refl > 0) {
@@ -263,7 +263,7 @@ void RTEngine::photonTrace(Ray ray, Color& photonColor, int depth) {
 		nodes[i]->point->update(ray, photonColor);
 		nodes[i]->update();
 	}
-	Color surfaceColor = collidePrimitive->material.color;
+	Color surfaceColor = collidePrimitive->getColor(p);
 	Color newPhotonColor(surfaceColor[0] * photonColor[0], surfaceColor[1] * photonColor[1], surfaceColor[2] * photonColor[2]);
 	double possibility = rand()%9999 / double(10000);
 	if (possibility < collidePrimitive->material.refl)

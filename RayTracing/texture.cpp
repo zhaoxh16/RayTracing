@@ -30,8 +30,10 @@ Vector3d PlaneTexture::getColor(Vector3d point) {
 	Vector3d relativePosition = point - startPoint;
 	int XPosition = relativePosition.dot(XDirection);
 	int YPosition = relativePosition.dot(YDirection);
-	XPosition %= int(cols*stretch);
-	YPosition %= int(rows*stretch);
+	XPosition %= int(cols);
+	YPosition %= int(rows);
+	while (XPosition < 0) XPosition += cols;
+	while (YPosition < 0) YPosition += rows;
 	Vec3b color = image.at<Vec3b>(YPosition, XPosition);
 	Vector3d myColor;
 	for (int i = 0; i < 3; ++i) {

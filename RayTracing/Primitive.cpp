@@ -6,11 +6,13 @@ Primitive::Primitive(Material material):material(material),useTexture(false){}
 
 void Primitive::setTexture(std::string fileName) {
 	useTexture = true;
+	texture = new PlaneTexture();
 	texture->setImage(fileName);
 }
 
 Color Primitive::getColor(Vector3d point) {
-	if(useTexture) return texture->getColor(point);
+	if(useTexture)
+		return texture->getColor(point)/255.0;
 	else return material.color;
 }
 

@@ -2,6 +2,7 @@
 #include <Eigen/Dense>
 #include <opencv2/opencv.hpp>
 #include <string>
+#include <iostream>
 
 using namespace Eigen;
 using namespace std;
