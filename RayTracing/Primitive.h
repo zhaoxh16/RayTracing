@@ -15,13 +15,15 @@ using namespace Eigen;
 class Primitive {
 public:
 	Material material;//材质
+	Texture* texture;
+	bool useTexture;
 
 	Primitive();
 	Primitive(Material material);
 	virtual int intersect(const Ray& ray, double& distance) = 0;//求与ray的交点，若无交点返回0，有交点且光源在外部返回1，有交点且光源在内部返回-1；同时将到交点的距离赋值给distance
 	virtual Direction getNormal(const Point& p) = 0;//获得一点处的法向量
-	/*virtual void setTexture(Texture* texture) = 0;*/
-	/*virtual void getColor(Vector3d point) = 0;*/
+	virtual void setTexture(std::string fileName);
+	virtual Color getColor(Vector3d point);
 };
 
 class Sphere: public Primitive {
@@ -34,6 +36,8 @@ public:
 	Sphere(Point centre, double radius, Material material);
 	int intersect(const Ray& ray, double& distance);//求交
 	Direction getNormal(const Point& p);//p点的法向量（p在球面上）
+	/*void setTexture(Texture* texture);
+	void getColor(Vector3d point);*/
 };
 
 class Light : public Sphere {
@@ -50,6 +54,5 @@ public:
 	Plane(Direction normal, double D, Material material);
 	int intersect(const Ray& ray, double& distance);
 	Direction getNormal(const Point& p);
-	/*void setTexture(Texture* texture);
-	Color getColor(Vector3d point);*/
+	void setTextureStatus(double stretch, Vector3d startPoint, Vector3d XDirection, Vector3d YDirection);
 };

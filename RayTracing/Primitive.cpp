@@ -1,8 +1,17 @@
 #include "Primitive.h"
 
-Primitive::Primitive(){}
+Primitive::Primitive(): useTexture(false){}
 
-Primitive::Primitive(Material material):material(material){}
+Primitive::Primitive(Material material):material(material),useTexture(false){}
+
+void Primitive::setTexture(std::string fileName) {
+	useTexture = true;
+	texture->setImage(fileName);
+}
+
+Color Primitive::getColor(Vector3d point) {
+	return texture->getColor(point);
+}
 
 Sphere::Sphere(): Primitive(),centre(-1,-1,-1),radius(-1),sqr(radius*radius){}
 
@@ -42,7 +51,9 @@ Direction Sphere::getNormal(const Point& p) {
 	return d;
 }
 
-Plane::Plane():Primitive(), normal(0,0,0), D(0){}
+Plane::Plane():Primitive(), normal(0,0,0), D(0){
+	texture = new PlaneTexture();
+}
 
 Plane::Plane(Direction normal, double D, Material material):normal(normal),D(D), Primitive(material){}
 
@@ -57,4 +68,11 @@ int Plane::intersect(const Ray& ray, double& distance) {
 
 Direction Plane::getNormal(const Point& p) {
 	return -normal;
+}
+
+void Plane::setTextureStatus(double stretch, Vector3d startPoint, Vector3d XDirection, Vector3d YDirection) {
+	texture->setStretch(stretch);
+	texture->setStartPoint(startPoint);
+	dynamic_cast<PlaneTexture*>(texture)->setXDirection(XDirection);
+	dynamic_cast<PlaneTexture*>(texture)->setYDirection(YDirection);
 }

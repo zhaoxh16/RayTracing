@@ -7,6 +7,7 @@ using namespace Eigen;
 using namespace std;
 using cv::Vec3b;
 using cv::imread;
+using cv::Mat;
 
 class Texture {
 public:
