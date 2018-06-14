@@ -4,6 +4,7 @@ const double RTEngine::weightLimit = 0.001;
 const double RTEngine::distanceINF = 100000000;
 const double RTEngine::distanceDelta = 0.00000001;
 const double RTEngine::phongPower = 20;
+const int DOFNumber = 10;
 
 RTEngine::RTEngine():scene(NULL), image(NULL){
 	photonCount = 0;
@@ -27,16 +28,24 @@ void RTEngine::show() {
 	image->showImage();
 }
 
+void RTEngine::getRayDOF(Vector3d originalPosition, int number, vector<Ray>& rays) {
+	Camera* camera = scene->camera();
+	Vector3d targetPosition = (originalPosition - camera->pos())*(camera->getFocalPlane() - camera->pos().z()) / (originalPosition.z() - camera->pos().z()) + camera->pos();
+	for (int i = 0; i < number; ++i) {
+		Vector3d origin = camera->getRandomOrigin();
+		Vector3d direction = targetPosition - origin;
+		direction.normalize();
+		rays.push_back(Ray(origin, direction, 1));
+	}
+}
+
 void RTEngine::emitRay() {
 	for (int i = 0; i < scene->size().x(); ++i) {
 		for (int j = 0; j < scene->size().y(); ++j) {
-			Vector3d direction[4];
-			direction[0] = Vector3d(i, j, 0) - scene->camera()->pos();
-			
-			for (int k = 0; k < 1; ++k) {
-				direction[k].normalize();
-				Ray ray(scene->camera()->pos(), direction[k], 1.0);
-				PPMTrace(ray, 1.0, Vector3d(i, j, 0));
+			vector<Ray> rays;
+			getRayDOF(Vector3d(i, j, 0), DOFNumber, rays);
+			for (int k = 0; k < DOFNumber; ++k) {;
+				PPMTrace(rays[k], 1.0, Vector3d(i, j, 0));
 			}
 		}
 		cout << i << endl;
@@ -49,7 +58,7 @@ void RTEngine::PPMRender() {
 	cout << tree.nodes.size() << endl;
 	double start = clock();
 	double stop;
-	for (int i = 0; i < 1000000; ++i) {
+	for (int i = 0; i < 100000; ++i) {
 		emitPhoton();
 		if (i % 10000 == 0) {
 			cout << i << endl;
@@ -70,7 +79,7 @@ void RTEngine::PPMRender() {
 	for (auto i : nodes) {
 		totn++;
 		HitPoint* p = i->point;
-		colorMap[(int)p->pixelPos[0]][(int)p->pixelPos[1]] += p->color / (3.1415926*p->r*p->r*(double)photonCount);
+		colorMap[(int)p->pixelPos[0]][(int)p->pixelPos[1]] += p->color / (3.1415926*p->r*p->r*(double)photonCount)/ DOFNumber;
 		if (totn % 1000 == 0) {
 			cout << totn << endl;
 			stop = clock();

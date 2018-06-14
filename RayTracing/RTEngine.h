@@ -52,5 +52,8 @@ private:
 	Vector3d getRandomNormalizeVector();
 	void photonTrace(Ray ray, Color& photonColor, int depth);
 
+	//æ∞…Ó
+	void getRayDOF(Vector3d originalPosition, int number, vector<Ray>& rays);
+
 
 };

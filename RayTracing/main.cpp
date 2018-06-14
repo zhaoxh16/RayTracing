@@ -13,6 +13,7 @@ int main() {
 	scene->setSize(Vector3d(800, 600, 700));
 	scene->setCamera(Vector3d(400, 250, -500));
 	scene->camera()->setFocalPlane(300);
+	scene->camera()->setRadius(30);
 	Material m(Vector3d(139, 104, 0), 0.1, 0.9, 0.5, 0, 0);
 	Material lightMaterial(Vector3d(2550000000/4, 2550000000/4, 2550000000/4), 0, 0, 0, 0, 0);
 	Light* light1 = new CirclePlaneLight(Vector3d(2550000000 / 4, 2550000000 / 4, 2550000000 / 4));
