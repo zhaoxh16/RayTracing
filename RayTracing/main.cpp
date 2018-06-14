@@ -15,9 +15,9 @@ int main() {
 	Material m(Vector3d(139, 104, 0), 0.1, 0.9, 0.5, 0, 0);
 	Material lightMaterial(Vector3d(2550000000/4, 2550000000/4, 2550000000/4), 0, 0, 0, 0, 0);
 	scene->addL(new Light(Point(400, 590, 100), 100, lightMaterial));
-	/*scene->addP(new Sphere(Point(200, 200, 300), 100, Material(Vector3d(240, 32, 160), 0.3, 0.5, 0.3, 0.2, 1.33)));
+	scene->addP(new Sphere(Point(200, 200, 300), 100, Material(Vector3d(240, 32, 160), 0.3, 0.5, 0.3, 0.2, 1.33)));
 	scene->addP(new Sphere(Point(500, 100, 300), 100, Material(Vector3d(87, 201, 0), 0.3, 0.5, 0.3, 0.2, 1.33)));
-	scene->addP(new Sphere(Point(450, 300, 400), 150, Material(Vector3d(230, 224, 176), 0.3, 0.7, 0.3, 0.5, 1.33)));*/
+	scene->addP(new Sphere(Point(450, 300, 400), 150, Material(Vector3d(230, 224, 176), 0.3, 0.7, 0.3, 0.5, 1.33)));
 	scene->addP(new Plane(Direction(0, 1, 0), -scene->size().y(), m));
 	scene->addP(new Plane(Direction(-1, 0, 0), 0, m));
 	scene->addP(new Plane(Direction(1, 0, 0), -scene->size().x(), m));

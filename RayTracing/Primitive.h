@@ -56,3 +56,12 @@ public:
 	Direction getNormal(const Point& p);
 	void setTextureStatus(double stretch, Vector3d startPoint, Vector3d XDirection, Vector3d YDirection);
 };
+
+class Polygon: public Primitive {
+public:
+
+private:
+	Direction normal;
+
+
+};
