@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Primitive.h"
 #include <vector>
+#include "light.h"
 
 using namespace std;
 

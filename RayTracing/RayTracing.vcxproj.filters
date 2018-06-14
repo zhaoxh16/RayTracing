@@ -57,6 +57,9 @@
     <ClInclude Include="bezierplane.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Primitive.cpp">
@@ -96,6 +99,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="bezierplane.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

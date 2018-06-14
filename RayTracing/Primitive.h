@@ -40,11 +40,6 @@ public:
 	void getColor(Vector3d point);*/
 };
 
-class Light : public Sphere {
-public:
-	using Sphere::Sphere;
-};
-
 class Plane : public Primitive {
 public:
 	Direction normal;//∑®œÚ¡ø

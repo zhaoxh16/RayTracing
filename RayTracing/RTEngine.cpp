@@ -32,9 +32,7 @@ void RTEngine::emitRay() {
 		for (int j = 0; j < scene->size().y(); ++j) {
 			Vector3d direction[4];
 			direction[0] = Vector3d(i, j, 0) - scene->camera()->pos();
-			/*direction[1] = Vector3d(i- 0.5, j+ 0.5, 0) - scene->camera()->pos();
-			direction[2] = Vector3d(i+ 0.5, j- 0.5, 0) - scene->camera()->pos();
-			direction[3] = Vector3d(i- 0.5, j- 0.5, 0) - scene->camera()->pos();*/
+			
 			for (int k = 0; k < 1; ++k) {
 				direction[k].normalize();
 				Ray ray(scene->camera()->pos(), direction[k], 1.0);
@@ -51,9 +49,9 @@ void RTEngine::PPMRender() {
 	cout << tree.nodes.size() << endl;
 	double start = clock();
 	double stop;
-	for (int i = 0; i < 10000; ++i) {
+	for (int i = 0; i < 1000000; ++i) {
 		emitPhoton();
-		if (i % 1000 == 0) {
+		if (i % 10000 == 0) {
 			cout << i << endl;
 			stop = clock();
 			cout << (stop - start) / CLK_TCK << 's' << endl;
@@ -170,9 +168,9 @@ int RTEngine::getIntersectPri(Ray ray, Primitive*& collidePrimitive, double& col
 }
 
 void RTEngine::getDiffuseAndPhong(Primitive* collidePrimitive, Vector3d N, Point p, Color& color, Ray ray) {
-	for (int i = 0; i < scene->light()->size(); ++i) {
+	/*for (int i = 0; i < scene->light()->size(); ++i) {
 		Vector3d L = scene->light()->at(i)->centre - p;
-		Color lightColor = scene->light()->at(i)->material.color;
+		Color lightColor = scene->light()->at(i)->getColor();
 		double distance = sqrt(L.dot(L));
 		L.normalize();
 		double LdN = L.dot(N);
@@ -182,7 +180,7 @@ void RTEngine::getDiffuseAndPhong(Primitive* collidePrimitive, Vector3d N, Point
 		double spec = getSpec(VdR, collidePrimitive->material.spec);
 		double shade = getShade(Ray(getOrigin(p, L), L, ray.nrefr), distance);
 		color += shade * (diff + spec)*Color(collidePrimitive->getColor(p).x()*lightColor.x(), collidePrimitive->getColor(p).y()*lightColor.y(), collidePrimitive->getColor(p).z()*lightColor.z());
-	}
+	}*/
 }
 
 double RTEngine::getShade(Ray ray, double distance) {
@@ -230,8 +228,8 @@ void RTEngine::emitPhoton() {
 	int lightCount = scene->light()->size();
 	int lightNum = rand() % lightCount;
 	Vector3d direction = getRandomNormalizeVector();
-	Ray ray(scene->light()->at(lightNum)->centre, direction, 1);
-	Color color = scene->light()->at(lightNum)->material.color;
+	Ray ray = scene->light()->at(lightNum)->getRandomEmitRay();
+	Color color = scene->light()->at(lightNum)->getColor();
 	photonTrace(ray, color, 0);
 	photonCount += 1;
 }

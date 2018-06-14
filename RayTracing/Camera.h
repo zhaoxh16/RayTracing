@@ -10,8 +10,13 @@ public:
 	Camera(Point p);
 	~Camera();
 	Vector3d pos();
+	void setFocalPlane(double focalPlane) {
+		this->focalPlane = focalPlane;
+	}
 
 private:
 	Point _p;//相机所在位置
+	double focalPlane;//焦平面所在位置的z分量
+
 
 };

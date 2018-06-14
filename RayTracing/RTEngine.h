@@ -51,4 +51,6 @@ private:
 	void emitPhoton();
 	Vector3d getRandomNormalizeVector();
 	void photonTrace(Ray ray, Color& photonColor, int depth);
+
+
 };
