@@ -52,11 +52,15 @@ public:
 	void setTextureStatus(double stretch, Vector3d startPoint, Vector3d XDirection, Vector3d YDirection);
 };
 
-class Polygon: public Primitive {
+class Triangle: public Primitive {
 public:
+	Triangle();
+	Triangle(Vector3d p0,Vector3d p1, Vector3d p2, Material material);//逆时针输入顶点
+	int intersect(const Ray& ray, double& distance);
+	Direction getNormal(const Point& p);
 
 private:
-	Direction normal;
-
+	vector<Vector3d> v;
+	Direction normal;//normal依据右手定则(v[2]-v[1])x(v[0]-v[1])
 
 };

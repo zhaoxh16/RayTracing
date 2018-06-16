@@ -79,3 +79,47 @@ void Plane::setTextureStatus(double stretch, Vector3d startPoint, Vector3d XDire
 	dynamic_cast<PlaneTexture*>(texture)->setXDirection(XDirection);
 	dynamic_cast<PlaneTexture*>(texture)->setYDirection(YDirection);
 }
+
+Triangle::Triangle():Primitive(), normal(0,0,0) {
+}
+
+Triangle::Triangle(Vector3d p0,Vector3d p1, Vector3d p2, Material material):Primitive(material) {
+	v[0] = p0;
+	v[1] = p1;
+	v[2] = p2;
+	this->normal = (v[2] - v[1]).cross(v[0] - v[1]);
+	normal.normalize();
+}
+
+Direction Triangle::getNormal(const Point& p) {
+	return normal;
+}
+
+int Triangle::intersect(const Ray& ray, double& distance) {
+	Vector3d E1 = v[0] - v[1];
+	Vector3d E2 = v[0] - v[2];
+	Vector3d S = v[0] - ray.origin;
+	Matrix3d mRdE1E2;
+	mRdE1E2 << ray.direction[0], E1[0], E2[0], ray.direction[1], E1[1], E2[1], ray.direction[2], E1[2], E2[2];
+	double detRdE1E2 = mRdE1E2.determinant();
+	Matrix3d mSE1E2;
+	mSE1E2 << S[0], E1[0], E2[0], S[1], E1[1], E2[1], S[2], E1[2], E2[2];
+	double detSE1E2 = mSE1E2.determinant();
+	Matrix3d mRdSE2;
+	mRdSE2 << ray.direction[0], S[0], E2[0], ray.direction[1], S[1], E2[1], ray.direction[2], S[2], E2[2];
+	double detRdSE2 = mRdSE2.determinant();
+	Matrix3d mRdE1S;
+	mRdE1S << ray.direction[0], E1[0], S[0], ray.direction[1], E1[1], S[1], ray.direction[2], E1[2], S[2];
+	double detRdE1S = mRdE1S.determinant();
+	double t = detSE1E2 / detRdE1E2;
+	double b = detRdSE2 / detRdE1E2;
+	double r = detRdE1S / detRdE1E2;
+	Point p = (1 - b - r)*v[0] + b * v[1] + r * v[2];
+	Vector3d path = p - ray.origin;
+	distance = sqrt(path.dot(path));
+	if (t > 0 && 0 <= b && b + r <= 1) {
+		if (ray.direction.dot(normal) < 0) return 1;
+		else return -1;
+	}
+	else return 0;
+}

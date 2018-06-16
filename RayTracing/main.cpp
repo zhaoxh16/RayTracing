@@ -3,19 +3,19 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "RTEngine.h"
+#include "Bezier.h"
 
 using namespace std;
 using namespace Eigen;
 
 int main() {
-
 	Scene* scene = new Scene();
 	scene->setSize(Vector3d(800, 600, 700));
 	scene->setCamera(Vector3d(400, 250, -500));
 	scene->camera()->setFocalPlane(300);
 	scene->camera()->setRadius(30);
 	Material m(Vector3d(139, 104, 0), 0.1, 0.9, 0.5, 0, 0);
-	Material lightMaterial(Vector3d(2550000000/4, 2550000000/4, 2550000000/4), 0, 0, 0, 0, 0);
+	Material lightMaterial(Vector3d(2550000000, 2550000000, 2550000000), 0, 0, 0, 0, 0);
 	Light* light1 = new CirclePlaneLight(Vector3d(2550000000 / 4, 2550000000 / 4, 2550000000 / 4));
 	dynamic_cast<CirclePlaneLight*>(light1)->setPosition(Point(400, 590, 100), 30, Vector3d(0, -1, 0));
 	scene->addL(light1);
@@ -31,6 +31,13 @@ int main() {
 	scene->addP(bottomPlane);
 	//scene->addP(new Plane(Direction(0, 0, 1), -600, m));
 	//scene->addP(new Plane(Direction(0, 0, -1), 600, m));
+	vector<Vector3d> bezierPoints;
+	bezierPoints.push_back(Vector3d(0, 150, 0));
+	bezierPoints.push_back(Vector3d(-100, 100, 0));
+	bezierPoints.push_back(Vector3d(-30, 50, 0));
+	bezierPoints.push_back(Vector3d(-50, 0, 0));
+	Bezier* bezier = new Bezier(bezierPoints, 300, 100, Material(Vector3d(87, 201, 0), 0.3, 0.5, 0.3, 0.2, 1));
+	scene->addP(bezier);
 	RTEngine engine;
 	engine.setScene(scene);
 	engine.emitRay();
