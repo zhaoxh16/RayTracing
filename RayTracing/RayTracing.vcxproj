@@ -129,16 +129,34 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bezier.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="hitpoint.h" />
+    <ClInclude Include="kdtree.h" />
+    <ClInclude Include="light.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="Photon.h" />
+    <ClInclude Include="photontracer.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Ray.h" />
-    <ClInclude Include="RayTracer.h" />
-    <ClInclude Include="test.h" />
+    <ClInclude Include="RTEngine.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bezier.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="kdtree.cpp" />
+    <ClCompile Include="light.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Photon.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Ray.cpp" />
-    <ClCompile Include="test.cpp" />
+    <ClCompile Include="RTEngine.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

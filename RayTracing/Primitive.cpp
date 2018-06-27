@@ -1,13 +1,20 @@
 #include "Primitive.h"
 
-Material::Material() : color(-1, -1, -1),refl(-1),diff(-1),spec(-1),refr(-1),nrefr(-1){}
+Primitive::Primitive(): useTexture(false){}
 
-Material::Material(Color color, double reflection, double diffuse, double spec, double refr, double nrefr):
-	color(color),refl(reflection),diff(diffuse),spec(spec),refr(refr),nrefr(nrefr){}
+Primitive::Primitive(Material material):material(material),useTexture(false){}
 
-Primitive::Primitive(){}
+void Primitive::setTexture(std::string fileName) {
+	useTexture = true;
+	texture = new PlaneTexture();
+	texture->setImage(fileName);
+}
 
-Primitive::Primitive(Material material):material(material){}
+Color Primitive::getColor(Vector3d point) {
+	if(useTexture)
+		return texture->getColor(point)/255.0;
+	else return material.color;
+}
 
 Sphere::Sphere(): Primitive(),centre(-1,-1,-1),radius(-1),sqr(radius*radius){}
 
@@ -47,7 +54,9 @@ Direction Sphere::getNormal(const Point& p) {
 	return d;
 }
 
-Plane::Plane():Primitive(), normal(0,0,0), D(0){}
+Plane::Plane():Primitive(), normal(0,0,0), D(0){
+	texture = new PlaneTexture();
+}
 
 Plane::Plane(Direction normal, double D, Material material):normal(normal),D(D), Primitive(material){}
 
@@ -62,4 +71,55 @@ int Plane::intersect(const Ray& ray, double& distance) {
 
 Direction Plane::getNormal(const Point& p) {
 	return -normal;
+}
+
+void Plane::setTextureStatus(double stretch, Vector3d startPoint, Vector3d XDirection, Vector3d YDirection) {
+	texture->setStretch(stretch);
+	texture->setStartPoint(startPoint);
+	dynamic_cast<PlaneTexture*>(texture)->setXDirection(XDirection);
+	dynamic_cast<PlaneTexture*>(texture)->setYDirection(YDirection);
+}
+
+Triangle::Triangle():Primitive(), normal(0,0,0) {
+}
+
+Triangle::Triangle(Vector3d p0,Vector3d p1, Vector3d p2, Material material):Primitive(material) {
+	v[0] = p0;
+	v[1] = p1;
+	v[2] = p2;
+	this->normal = (v[2] - v[1]).cross(v[0] - v[1]);
+	normal.normalize();
+}
+
+Direction Triangle::getNormal(const Point& p) {
+	return normal;
+}
+
+int Triangle::intersect(const Ray& ray, double& distance) {
+	Vector3d E1 = v[0] - v[1];
+	Vector3d E2 = v[0] - v[2];
+	Vector3d S = v[0] - ray.origin;
+	Matrix3d mRdE1E2;
+	mRdE1E2 << ray.direction[0], E1[0], E2[0], ray.direction[1], E1[1], E2[1], ray.direction[2], E1[2], E2[2];
+	double detRdE1E2 = mRdE1E2.determinant();
+	Matrix3d mSE1E2;
+	mSE1E2 << S[0], E1[0], E2[0], S[1], E1[1], E2[1], S[2], E1[2], E2[2];
+	double detSE1E2 = mSE1E2.determinant();
+	Matrix3d mRdSE2;
+	mRdSE2 << ray.direction[0], S[0], E2[0], ray.direction[1], S[1], E2[1], ray.direction[2], S[2], E2[2];
+	double detRdSE2 = mRdSE2.determinant();
+	Matrix3d mRdE1S;
+	mRdE1S << ray.direction[0], E1[0], S[0], ray.direction[1], E1[1], S[1], ray.direction[2], E1[2], S[2];
+	double detRdE1S = mRdE1S.determinant();
+	double t = detSE1E2 / detRdE1E2;
+	double b = detRdSE2 / detRdE1E2;
+	double r = detRdE1S / detRdE1E2;
+	Point p = (1 - b - r)*v[0] + b * v[1] + r * v[2];
+	Vector3d path = p - ray.origin;
+	distance = sqrt(path.dot(path));
+	if (t > 0 && 0 <= b && b + r <= 1) {
+		if (ray.direction.dot(normal) < 0) return 1;
+		else return -1;
+	}
+	else return 0;
 }

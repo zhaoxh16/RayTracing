@@ -15,33 +15,87 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bezier.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Primitive.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="test.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Ray.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RayTracer.h">
+    <ClInclude Include="Material.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RTEngine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Photon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="photontracer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hitpoint.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="kdtree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Bezier.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bezier.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="test.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Primitive.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Ray.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Photon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RTEngine.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="kdtree.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Bezier.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
