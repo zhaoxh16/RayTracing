@@ -4,7 +4,6 @@
 #include "Image.h"
 #include "kdtree.h"
 #include "hitpoint.h"
-#include "light.h"
 
 using namespace Eigen;
 

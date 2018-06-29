@@ -30,8 +30,6 @@ void RTEngine::show() {
 
 void RTEngine::getRayDOF(Vector3d originalPosition, int number, vector<Ray>& rays) {
 	Camera* camera = scene->camera();
-	double deltaX = (randomNumber(1) - 1.0 / 2);
-	double deltaY = (randomNumber(1) - 1.0 / 2);
 	Vector3d targetPosition = (originalPosition - camera->pos())*(camera->getFocalPlane() - camera->pos().z()) / (originalPosition.z() - camera->pos().z()) + camera->pos();
 	for (int i = 0; i < number; ++i) {
 		Vector3d origin = camera->getRandomOrigin();
