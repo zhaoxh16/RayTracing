@@ -12,6 +12,7 @@ void Image::drawPixel(int x, int y, cv::Vec3b color) {
 }
 
 void Image::showImage() {
+	cv::imwrite("1.jpg", *M);
 	cv::imshow("M", *M);
 	cv::waitKey(0);
 }

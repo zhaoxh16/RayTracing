@@ -24,11 +24,8 @@ int Box::intersect(const Ray& ray, double& ta, double& tb) {
 
 Bezier::Bezier(vector<Vector3d> p, double axisX, double axisZ, Material material) {
 	vector<double> deltaX;
+	cout << p.size() << endl;
 	for (int i = 0; i < p.size(); ++i) {
-		if (p[i].z() != 0 || p[i].x() > 0) {
-			cout << "Bezier输入错误" << endl;
-			return;
-		}
 		deltaX.push_back(-p[i].x());
 	}
 	_p = new Vector3d[p.size()];
@@ -83,9 +80,9 @@ bool Bezier::iteration(double t, double u, double v, Vector3d& result, Vector3d&
 	Matrix3d m;
 	Vector3d fx(10000, 10000, 10000);
 	int pNum = _pNum;
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 50; ++i) {
 		/*cout << "fx: " << fx[0] << ' ' << fx[1] << ' ' << fx[2] << endl;*/
-		if (u < 0 || u>1 || t < 0)break;
+		if (u < -0.02 || u>1.02 || t < 0)break;
 		if (v < 0)v += 2 * 3.1415926535;
 		if (v > 2 * 3.1415926535) v -= 2 * 3.1415926535;
 		if (v < 0 || v>2 * 3.1415926535)break;
@@ -93,33 +90,32 @@ bool Bezier::iteration(double t, double u, double v, Vector3d& result, Vector3d&
 			flag = 1;
 			break;
 		}
-		double** bernstein = new double*[_pNum];
-		for (int i = 0; i < _pNum; ++i) {
-			bernstein[i] = new double[_pNum];
+		double** bernstein = new double*[pNum];
+		for (int i = 0; i < pNum; ++i) {
+			bernstein[i] = new double[pNum];
 		}
 		bernstein[0][0] = 1;
-		for (int i = 1; i < _pNum; ++i) {
+		for (int i = 1; i < pNum; ++i) {
 			for (int j = 0; j <= i; ++j) {
 				if (j == 0) bernstein[j][i] = (1 - u)*bernstein[j][i - 1];
 				else if (j < i)bernstein[j][i] = (1 - u)*bernstein[j][i - 1] + u * bernstein[j - 1][i - 1];
 				else bernstein[j][i] = u * bernstein[j - 1][i - 1];
 			}
 		}
-
-		/*Vector3d bezierPlanePoint(0, 0, 0);
-		for (int i = 0; i < _pNum; ++i) {
-			bezierPlanePoint += _p[i] * bernstein[i][_pNum - 1];
-		}*/
-		Vector3d bezierPlanePoint = _p[0] * bernstein[0][3] + _p[1] * bernstein[1][3] + _p[2] * bernstein[2][3] + _p[3] * bernstein[3][3];
-		Vector3d bezierPoint(bezierPlanePoint[0] * cos(v) + axisX, bezierPlanePoint[1], bezierPlanePoint[0]*sin(v) + axisZ);
-		/*Vector3d diffu(0, 0, 0);
-		diffu += _p[0] * (-bernstein[0][pNum - 2]);
-		diffu += _p[pNum-1] * bernstein[pNum - 2][pNum - 2];
-		for (int i = 1; i < pNum-1; ++i) {
-			diffu += (_p[i] * (bernstein[i - 1][pNum - 2] - bernstein[i][pNum - 2]));
+		Vector3d bezierPlanePoint(0, 0, 0);
+		for (int i = 0; i < pNum; ++i) {
+			bezierPlanePoint += _p[i] * bernstein[i][pNum - 1];
 		}
-		diffu *= 3;*/
-		Vector3d diffu = 3 * (_p[0] * (-bernstein[0][2]) + _p[1] * (bernstein[0][2] - bernstein[1][2]) + _p[2] * (bernstein[1][2] - bernstein[2][2]) + _p[3] * bernstein[2][2]);
+		/*Vector3d bezierPlanePoint = _p[0] * bernstein[0][3] + _p[1] * bernstein[1][3] + _p[2] * bernstein[2][3] + _p[3] * bernstein[3][3];*/
+		Vector3d bezierPoint(bezierPlanePoint[0] * cos(v) + axisX, bezierPlanePoint[1], bezierPlanePoint[0]*sin(v) + axisZ);
+		Vector3d diffu(0, 0, 0);
+		diffu += _p[0] * (-bernstein[0][pNum - 2]);
+		diffu += _p[pNum - 1] * bernstein[pNum - 2][pNum - 2];
+		for (int i = 1; i < pNum - 1; ++i) {
+			diffu += _p[i] * (bernstein[i - 1][pNum - 2] - bernstein[i][pNum - 2]);
+		}
+		diffu *= (pNum - 1);
+	/*	Vector3d diffu = 3 * (_p[0] * (-bernstein[0][2]) + _p[1] * (bernstein[0][2] - bernstein[1][2]) + _p[2] * (bernstein[1][2] - bernstein[2][2]) + _p[3] * bernstein[2][2]);*/
 		m(0, 0) = ray.direction[0];
 		m(1, 0) = ray.direction[1];
 		m(2, 0) = ray.direction[2];
@@ -137,6 +133,8 @@ bool Bezier::iteration(double t, double u, double v, Vector3d& result, Vector3d&
 		t = x[0];
 		u = x[1];
 		v = x[2];
+		for (int i = 0; i < pNum; ++i) delete[] bernstein[i];
+		delete[] bernstein;
 	}
 	if (flag == 0) return false;
 	result = Vector3d(t, u, v);
@@ -172,11 +170,10 @@ int Bezier::intersect(const Ray& ray, double& distance) {
 	constantv = acos(-path[0]);
 	if (path[2] > 0) constantv = 2 * acos(-1) - constantv;
 	//随机选取初始点进行迭代
-	for (int i = 0; i < 20; ++i) {
+	for (int i = 0; i < 60; ++i) {
 		double u = randomNumber(1);
-		double v = constantv + randomNumber(1) - 1.0 / 2.0;
-		double t = constantt;
-		while (v < 0 || v>2 * 3.1415927) v = constantv + randomNumber(1) - 1.0/2.0;
+		double v = randomNumber(1) * 2 * 3.1415926535;
+		double t = constantt + (randomNumber(1) - 1.0 / 2.0) * 300;
 		Vector3d result(0, 0, 0);
 		Vector3d normal(0, 0, 0);
 		if (iteration(t, u, v, result, normal, ray)) {

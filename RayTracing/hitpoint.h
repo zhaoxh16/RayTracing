@@ -3,6 +3,7 @@
 #include <Eigen/Dense>
 #include <iostream>
 #include "Ray.h"
+#include "omp.h"
 
 using namespace Eigen;
 
@@ -18,8 +19,9 @@ struct HitPoint {
 	double r;
 	double count;
 	Vector3d color;
+	omp_lock_t lock;
 	HitPoint(Vector3d pos, Vector3d N):pixelPos(0,0,0),BRDF(1),colorWeight(1,1,1),r(1),count(0),color(0,0,0) {
-	
+		omp_init_lock(&lock);
 	}
 	HitPoint(Vector3d pos, Vector3d N, Vector3d dir, Vector3d pixelPos, double BRDF, Vector3d colorWeight, double r, double count, Vector3d color):pos(pos),N(N),dir(dir),pixelPos(pixelPos),BRDF(BRDF),colorWeight(colorWeight),r(r),count(count),color(color){}
 

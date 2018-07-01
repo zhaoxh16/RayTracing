@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include "hitpoint.h"
+#include "omp.h"
 
 using namespace std;
 
@@ -13,7 +14,10 @@ struct Node {
 	int index;
 	double radius = iniRadius;
 	HitPoint* point;
-	Node(HitPoint* point) :point(point), p(NULL), lc(NULL), rc(NULL){}
+	omp_lock_t lock;
+	Node(HitPoint* point) :point(point), p(NULL), lc(NULL), rc(NULL){
+		omp_init_lock(&lock);
+	}
 	void setIndex(int index) { this->index = index; }
 	void update() {
 		double a, b, c;
