@@ -4,7 +4,7 @@ const double RTEngine::weightLimit = 0.001;
 const double RTEngine::distanceINF = 100000000;
 const double RTEngine::distanceDelta = 0.00000001;
 const double RTEngine::phongPower = 20;
-const int DOFNumber = 10;
+const int DOFNumber = 20;
 
 RTEngine::RTEngine():scene(NULL), image(NULL){
 	photonCount = 0;
@@ -30,11 +30,11 @@ void RTEngine::show() {
 
 void RTEngine::getRayDOF(Vector3d originalPosition, int number, vector<Ray>& rays) {
 	Camera* camera = scene->camera();
-	double deltaX = (randomNumber(1) - 1.0 / 2);
-	double deltaY = (randomNumber(1) - 1.0 / 2);
-	Vector3d targetPosition = (originalPosition - camera->pos())*(camera->getFocalPlane() - camera->pos().z()) / (originalPosition.z() - camera->pos().z()) + camera->pos();
 	for (int i = 0; i < number; ++i) {
 		Vector3d origin = camera->getRandomOrigin();
+		double deltaX = (randomNumber(1) - 1.0 / 2);
+		double deltaY = (randomNumber(1) - 1.0 / 2);
+		Vector3d targetPosition = (originalPosition+Vector3d(deltaX,deltaY,0) - camera->pos())*(camera->getFocalPlane() - camera->pos().z()) / (originalPosition.z() - camera->pos().z()) + camera->pos();
 		Vector3d direction = targetPosition - origin;
 		direction.normalize();
 		rays.push_back(Ray(origin, direction, 1));
@@ -60,10 +60,20 @@ void RTEngine::PPMRender() {
 	cout << tree.nodes.size() << endl;
 	double start = clock();
 	double stop;
-	for (int i = 0; i < 100000; ++i) {
+	for (int i = 0; i < 20000; ++i) {
 		emitPhoton();
 		if (i % 10000 == 0) {
 			cout << i << endl;
+			stop = clock();
+			cout << (stop - start) / CLK_TCK << 's' << endl;
+			start = stop;
+		}
+	}
+#pragma omp parallel for num_threads(6)
+	for (int i = 0; i < 10000000; ++i) {
+		emitPhoton();
+		if (i % 10000 == 0) {
+			cout << i+20000 << endl;
 			stop = clock();
 			cout << (stop - start) / CLK_TCK << 's' << endl;
 			start = stop;
@@ -267,7 +277,8 @@ void RTEngine::photonTrace(Ray ray, Color& photonColor, int depth) {
 	Point p = ray.origin + ray.direction*collideDistance;
 	Direction N = collidePrimitive->getNormal(p);
 	Direction R = ray.direction - N * ray.direction.dot(N)*2.0;
-	vector<Node*> nodes = tree.rangeSearch(p,iniRadius);	
+	vector<Node*> nodes = tree.rangeSearch(p,iniRadius);
+//#pragma omp parallel for num_threads(6)
 	for (int i = 0; i < nodes.size(); ++i) {
 		nodes[i]->point->update(ray, photonColor);
 		nodes[i]->update();
